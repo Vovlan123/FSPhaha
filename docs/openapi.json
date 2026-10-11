@@ -1,0 +1,5063 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ФСП Талант API",
+    "description": "Платформа подбора ИТ-специалистов с обратной механикой: кандидат проходит опрос и адаптивный тест, получает категорию «специализация × грейд», работодатель находит его в категоризированной базе и отправляет приглашение с обязательной зарплатной вилкой. Профиль обогащается достижениями ФСП.\n\nАвторизация: `Authorization: Bearer <token>` из `/api/auth/login` или `/api/auth/verify`.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Регистрация по email",
+        "operationId": "register_api_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/auth/verify": {
+      "get": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Подтверждение email по токену из письма",
+        "operationId": "verify_api_auth_verify_get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/auth/resend": {
+      "post": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Повторно отправить письмо подтверждения",
+        "operationId": "resend_api_auth_resend_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Вход",
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Текущий пользователь",
+        "operationId": "me_api_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Выход (токен удаляется на клиенте)",
+        "operationId": "logout_api_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/meta/dictionaries": {
+      "get": {
+        "tags": [
+          "Справочники и система"
+        ],
+        "summary": "Справочники: специализации, грейды, навыки, отрасли, статусы",
+        "operationId": "dictionaries_api_meta_dictionaries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/system/health": {
+      "get": {
+        "tags": [
+          "Справочники и система"
+        ],
+        "summary": "Проверка работоспособности",
+        "operationId": "health_api_system_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/system/bank-health": {
+      "get": {
+        "tags": [
+          "Справочники и система"
+        ],
+        "summary": "Состояние банка заданий и детектор утечек",
+        "description": "По каждому шаблону: параметры IRT, число показов, доля верных, средний остаток «ответ − ожидание модели»\nпо последним показам и статус. Шаблон уходит в карантин, если по нему систематически отвечают лучше,\nчем предсказывает модель, — признак утечки приёма решения.",
+        "operationId": "bank_health_api_system_bank_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/system/blueprint": {
+      "get": {
+        "tags": [
+          "Справочники и система"
+        ],
+        "summary": "Демонстрация: план теста для специализации, грейда и стека (без авторизации)",
+        "operationId": "demo_blueprint_api_system_blueprint_get",
+        "parameters": [
+          {
+            "name": "specialization",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "backend",
+              "title": "Specialization"
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "middle",
+              "title": "Grade"
+            }
+          },
+          {
+            "name": "stack",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "python,sql,postgresql",
+              "title": "Stack"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/system/webhook-echo": {
+      "get": {
+        "tags": [
+          "Справочники и система",
+          "Интеграция с ATS"
+        ],
+        "summary": "Последние события, полученные демо-приёмником",
+        "operationId": "webhook_echo_log_api_system_webhook_echo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Справочники и система",
+          "Интеграция с ATS"
+        ],
+        "summary": "Демо-приёмник вебхуков (имитирует ATS): проверяет подпись и запоминает событие",
+        "operationId": "webhook_echo_api_system_webhook_echo_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/candidate/profile": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Мой профиль",
+        "operationId": "get_profile_api_candidate_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Заполнить или изменить профиль (форма или подтверждённые данные из PDF)",
+        "operationId": "put_profile_api_candidate_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/resume/parse": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Распознать PDF-резюме (поля возвращаются для проверки, не сохраняются)",
+        "operationId": "parse_resume_api_candidate_resume_parse_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_parse_resume_api_candidate_resume_parse_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/survey": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Опрос: отрасль, специализация, стек, условия, предполагаемый грейд",
+        "operationId": "survey_api_candidate_survey_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SurveyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/status": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Сводка: категория, сила профиля, доступность тестов, следующие шаги",
+        "operationId": "status_api_candidate_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/history": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "История опросов, попыток теста и изменений грейда",
+        "operationId": "history_api_candidate_history_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/privacy": {
+      "put": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Приватность, согласие на публикацию, статус поиска",
+        "operationId": "privacy_api_candidate_privacy_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrivacyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/profile.pdf": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Стандартизированный PDF-профиль",
+        "operationId": "profile_pdf_api_candidate_profile_pdf_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/invitations": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Мои приглашения",
+        "operationId": "my_invitations_api_candidate_invitations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/invitations/{inv_id}": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Открыть приглашение (статус «просмотрено»)",
+        "operationId": "open_invitation_api_candidate_invitations__inv_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/candidate/invitations/{inv_id}/accept": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Принять приглашение — контакты раскрываются работодателю",
+        "operationId": "accept_invitation_api_candidate_invitations__inv_id__accept_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/candidate/invitations/{inv_id}/decline": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Отклонить приглашение с причиной",
+        "operationId": "decline_invitation_api_candidate_invitations__inv_id__decline_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeclineIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/candidate/invitations/{inv_id}/complain": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Пожаловаться на приглашение (фиктивная вакансия, спам, обман)",
+        "operationId": "complain_api_candidate_invitations__inv_id__complain_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComplaintIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/candidate/applications": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Мои отклики на вакансии",
+        "operationId": "my_applications_api_candidate_applications_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/tasks": {
+      "get": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Текущее регулярное задание и история",
+        "operationId": "my_tasks_api_candidate_tasks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/tasks/next": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Получить новое задание (не чаще раза в TASK_INTERVAL_DAYS)",
+        "operationId": "next_task_api_candidate_tasks_next_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/candidate/tasks/{aid}/submit": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Отправить решение или подход",
+        "operationId": "submit_task_api_candidate_tasks__aid__submit_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "aid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Aid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/candidate/tasks/{aid}/skip": {
+      "post": {
+        "tags": [
+          "Кабинет кандидата"
+        ],
+        "summary": "Пропустить задание",
+        "operationId": "skip_task_api_candidate_tasks__aid__skip_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "aid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Aid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/tests/availability": {
+      "get": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Доступность теста на каждый грейд (ограничения частоты)",
+        "operationId": "availability_api_tests_availability_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/tests/start": {
+      "post": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Начать адаптивный тест на заявленный грейд",
+        "operationId": "start_api_tests_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestStartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Тест на этот грейд сейчас недоступен; в detail.available_at — когда станет доступен"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/tests/active": {
+      "get": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Текущая незавершённая попытка (или null)",
+        "operationId": "active_api_tests_active_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/tests/{attempt_id}": {
+      "get": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Состояние попытки: текущий вопрос или результат",
+        "operationId": "get_attempt_api_tests__attempt_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/tests/{attempt_id}/answer": {
+      "post": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Ответить на текущий вопрос. Верный ответ клиенту не раскрывается",
+        "operationId": "answer_api_tests__attempt_id__answer_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/tests/{attempt_id}/accept-upgrade": {
+      "post": {
+        "tags": [
+          "Тестирование"
+        ],
+        "summary": "Принять грейд выше по результату уверенной попытки",
+        "operationId": "accept_upgrade_api_tests__attempt_id__accept_upgrade_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/vacancies": {
+      "get": {
+        "tags": [
+          "Вакансии (кандидат)"
+        ],
+        "summary": "Опубликованные вакансии с процентом соответствия моему профилю",
+        "operationId": "list_vacancies_api_vacancies_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "specialization",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Specialization"
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Grade"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/vacancies/{vid}": {
+      "get": {
+        "tags": [
+          "Вакансии (кандидат)"
+        ],
+        "summary": "Вакансия",
+        "operationId": "get_vacancy_api_vacancies__vid__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Vid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/vacancies/{vid}/apply": {
+      "post": {
+        "tags": [
+          "Вакансии (кандидат)"
+        ],
+        "summary": "Откликнуться: контакты станут видны этой компании",
+        "operationId": "apply_api_vacancies__vid__apply_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Vid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/vacancies/{vid}/blueprint": {
+      "get": {
+        "tags": [
+          "Вакансии (кандидат)",
+          "Тестирование"
+        ],
+        "summary": "Какие задания система сформирует под эту вакансию",
+        "operationId": "vacancy_blueprint_api_vacancies__vid__blueprint_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Vid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/company": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Профиль компании",
+        "operationId": "get_company_api_employer_company_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Заполнить или изменить профиль компании",
+        "operationId": "put_company_api_employer_company_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/company/verify": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Подтвердить компанию: ИНН (контрольная сумма) + корпоративный домен",
+        "operationId": "verify_company_api_employer_company_verify_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/dashboard": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Сводка: сетка категорий, приглашения по статусам, квота",
+        "operationId": "dashboard_api_employer_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/categories": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Сетка категорий «специализация × грейд» с числом кандидатов",
+        "operationId": "categories_api_employer_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/candidates": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Поиск по банку кандидатов (только категоризированные и согласившиеся на публикацию)",
+        "operationId": "search_candidates_api_employer_candidates_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "specialization",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Specialization"
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Grade"
+            }
+          },
+          {
+            "name": "stack",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Навыки через запятую, все должны быть в профиле",
+              "title": "Stack"
+            },
+            "description": "Навыки через запятую, все должны быть в профиле"
+          },
+          {
+            "name": "has_fsp",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Has Fsp"
+            }
+          },
+          {
+            "name": "verified_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Навыки из stack подтверждены тестом",
+              "default": false,
+              "title": "Verified Only"
+            },
+            "description": "Навыки из stack подтверждены тестом"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(strength|theta|fsp|salary)$",
+              "default": "strength",
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 30,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/candidates/{cid}": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Карточка кандидата (анонимна до принятия приглашения или отклика)",
+        "operationId": "candidate_card_api_employer_candidates__cid__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Cid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/candidates/{cid}/profile.pdf": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "PDF-профиль кандидата (анонимный до раскрытия контактов)",
+        "operationId": "candidate_pdf_api_employer_candidates__cid__profile_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Cid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/needs/parse": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Разобрать текст описания потребности в структуру (NLP)",
+        "operationId": "parse_need_api_employer_needs_parse_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/needs": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Мои потребности",
+        "operationId": "list_needs_api_employer_needs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Создать потребность и сразу сформировать подборку",
+        "operationId": "create_need_api_employer_needs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NeedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/needs/{need_id}": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Потребность",
+        "operationId": "get_need_api_employer_needs__need_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Уточнить потребность (подборка пересчитывается, шорт-лист сохраняется)",
+        "operationId": "update_need_api_employer_needs__need_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NeedIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Удалить потребность",
+        "operationId": "delete_need_api_employer_needs__need_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/needs/{need_id}/selection": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Пересчитать подборку (шорт-лист сохраняется, новые помечаются)",
+        "operationId": "rebuild_selection_api_employer_needs__need_id__selection_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Подборка с фильтрами поверх сохранённого результата",
+        "operationId": "get_selection_api_employer_needs__need_id__selection_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          },
+          {
+            "name": "stack",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Навыки через запятую",
+              "title": "Stack"
+            },
+            "description": "Навыки через запятую"
+          },
+          {
+            "name": "has_fsp",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Has Fsp"
+            }
+          },
+          {
+            "name": "confident_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "T ≥ 0.5: уверенно в грейде",
+              "default": false,
+              "title": "Confident Only"
+            },
+            "description": "T ≥ 0.5: уверенно в грейде"
+          },
+          {
+            "name": "salary_fit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Ожидания не выше вилки",
+              "default": false,
+              "title": "Salary Fit"
+            },
+            "description": "Ожидания не выше вилки"
+          },
+          {
+            "name": "pinned_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Pinned Only"
+            }
+          },
+          {
+            "name": "new_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "New Only"
+            }
+          },
+          {
+            "name": "min_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 0,
+              "title": "Min Score"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/needs/{need_id}/selection/{cid}/pin": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Добавить в шорт-лист или убрать из него",
+        "operationId": "pin_api_employer_needs__need_id__selection__cid__pin_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          },
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Cid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_pin_api_employer_needs__need_id__selection__cid__pin_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/needs/{need_id}/blueprint": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Какие задания система сформирует под эту потребность",
+        "operationId": "need_blueprint_api_employer_needs__need_id__blueprint_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "need_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Need Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/invitations/quota": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Недельная квота приглашений",
+        "operationId": "get_quota_api_employer_invitations_quota_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/invitations": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Пригласить кандидата: вилка обязательна",
+        "operationId": "create_invitation_api_employer_invitations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          },
+          "429": {
+            "description": "Исчерпана недельная квота приглашений"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Мои приглашения и их статусы",
+        "operationId": "list_invitations_api_employer_invitations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/invitations/{inv_id}/withdraw": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Отозвать приглашение до ответа кандидата",
+        "operationId": "withdraw_api_employer_invitations__inv_id__withdraw_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/vacancies": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Мои вакансии",
+        "operationId": "list_vacancies_api_employer_vacancies_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Опубликовать вакансию (вилка обязательна)",
+        "operationId": "create_vacancy_api_employer_vacancies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VacancyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/vacancies/{vid}": {
+      "put": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Редактировать вакансию или снять с публикации",
+        "operationId": "update_vacancy_api_employer_vacancies__vid__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Vid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VacancyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/vacancies/{vid}/applications": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Отклики на вакансию (открытие помечает их просмотренными)",
+        "operationId": "vacancy_applications_api_employer_vacancies__vid__applications_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Vid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/applications/{app_id}/status": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Изменить статус отклика",
+        "operationId": "application_status_api_employer_applications__app_id__status_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "App Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppStatusIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/tasks": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Мои регулярные задания со статистикой решений",
+        "operationId": "list_tasks_api_employer_tasks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Создать регулярное задание с рубрикой оценки",
+        "operationId": "create_task_api_employer_tasks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/tasks/{tid}/active": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Включить или выключить выдачу задания",
+        "operationId": "toggle_task_api_employer_tasks__tid__active_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_toggle_task_api_employer_tasks__tid__active_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/tasks/{tid}/submissions": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Решения кандидатов (анонимно)",
+        "operationId": "task_submissions_api_employer_tasks__tid__submissions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/submissions/{aid}/rate": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя"
+        ],
+        "summary": "Оценить решение (1–5)",
+        "operationId": "rate_api_employer_submissions__aid__rate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "aid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Aid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/candidates/{cid}/export.json": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя",
+          "Интеграция с ATS"
+        ],
+        "summary": "Экспорт кандидата для импорта в ATS (после раскрытия контактов)",
+        "operationId": "export_candidate_api_employer_candidates__cid__export_json_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Cid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/employer/integrations": {
+      "get": {
+        "tags": [
+          "Кабинет работодателя",
+          "Интеграция с ATS"
+        ],
+        "summary": "Настройки вебхуков и журнал доставок",
+        "operationId": "get_integrations_api_employer_integrations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/integrations/webhook": {
+      "put": {
+        "tags": [
+          "Кабинет работодателя",
+          "Интеграция с ATS"
+        ],
+        "summary": "Задать URL приёмника событий в ATS",
+        "operationId": "set_webhook_api_employer_integrations_webhook_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/integrations/webhook/rotate": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя",
+          "Интеграция с ATS"
+        ],
+        "summary": "Выпустить новый секрет подписи",
+        "operationId": "rotate_secret_api_employer_integrations_webhook_rotate_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/employer/integrations/webhook/test": {
+      "post": {
+        "tags": [
+          "Кабинет работодателя",
+          "Интеграция с ATS"
+        ],
+        "summary": "Отправить тестовое событие ping",
+        "operationId": "test_webhook_api_employer_integrations_webhook_test_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/fsp/link/start": {
+      "post": {
+        "tags": [
+          "Интеграция с ФСП ID"
+        ],
+        "summary": "Начать привязку ФСП ID: вернёт ссылку на страницу входа ФСП (OIDC)",
+        "operationId": "link_start_api_fsp_link_start_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/fsp/callback": {
+      "get": {
+        "tags": [
+          "Интеграция с ФСП ID"
+        ],
+        "summary": "Возврат из ФСП ID (redirect_uri). Без авторизации: пользователь определяется по state",
+        "operationId": "callback_api_fsp_callback_get",
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "State"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        }
+      }
+    },
+    "/api/fsp/refresh": {
+      "post": {
+        "tags": [
+          "Интеграция с ФСП ID"
+        ],
+        "summary": "Обновить достижения из реестра ФСП (client credentials)",
+        "operationId": "refresh_api_fsp_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/fsp/link": {
+      "delete": {
+        "tags": [
+          "Интеграция с ФСП ID"
+        ],
+        "summary": "Отвязать ФСП ID и удалить снимок достижений",
+        "operationId": "unlink_api_fsp_link_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован или токен истёк"
+          },
+          "403": {
+            "description": "Недостаточно прав для роли"
+          },
+          "404": {
+            "description": "Объект не найден или принадлежит другому пользователю"
+          },
+          "409": {
+            "description": "Конфликт состояния (ограничение частоты, неверный статус, дубликат)"
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnswerIn": {
+        "properties": {
+          "item_id": {
+            "type": "integer",
+            "title": "Item Id"
+          },
+          "answer_index": {
+            "type": "integer",
+            "maximum": 9.0,
+            "minimum": -1.0,
+            "title": "Answer Index",
+            "description": "Номер варианта; -1 — время вышло, ответа нет"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "answer_index"
+        ],
+        "title": "AnswerIn"
+      },
+      "AppStatusIn": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "viewed",
+              "invited",
+              "rejected"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "AppStatusIn"
+      },
+      "ApplyIn": {
+        "properties": {
+          "cover_letter": {
+            "type": "string",
+            "maxLength": 3000,
+            "title": "Cover Letter",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "ApplyIn"
+      },
+      "Body_parse_resume_api_candidate_resume_parse_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_parse_resume_api_candidate_resume_parse_post"
+      },
+      "Body_pin_api_employer_needs__need_id__selection__cid__pin_post": {
+        "properties": {
+          "pinned": {
+            "type": "boolean",
+            "title": "Pinned",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "Body_pin_api_employer_needs__need_id__selection__cid__pin_post"
+      },
+      "Body_toggle_task_api_employer_tasks__tid__active_post": {
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "active"
+        ],
+        "title": "Body_toggle_task_api_employer_tasks__tid__active_post"
+      },
+      "CompanyIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "title": "Description",
+            "default": ""
+          },
+          "industry": {
+            "type": "string",
+            "title": "Industry",
+            "default": ""
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Website",
+            "default": ""
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "City",
+            "default": ""
+          },
+          "size": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Size",
+            "default": ""
+          },
+          "contact_email": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Contact Email",
+            "default": ""
+          },
+          "contact_telegram": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Contact Telegram",
+            "default": ""
+          },
+          "contact_phone": {
+            "type": "string",
+            "maxLength": 50,
+            "title": "Contact Phone",
+            "default": ""
+          },
+          "inn": {
+            "type": "string",
+            "maxLength": 12,
+            "title": "Inn",
+            "description": "ИНН: 10 цифр (юрлицо) или 12 (ИП)",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CompanyIn"
+      },
+      "ComplaintIn": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "ComplaintIn"
+      },
+      "DeclineIn": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "expected_salary": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000.0,
+                "minimum": 1000.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Salary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "DeclineIn"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InvitationIn": {
+        "properties": {
+          "salary_from": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary From",
+            "description": "Нижняя граница, ₽/мес"
+          },
+          "salary_to": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary To",
+            "description": "Верхняя граница, ₽/мес"
+          },
+          "candidate_id": {
+            "type": "integer",
+            "title": "Candidate Id"
+          },
+          "need_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Need Id"
+          },
+          "vacancy_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vacancy Id"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title",
+            "description": "Позиция"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 6000,
+            "minLength": 10,
+            "title": "Description",
+            "description": "Описание предложения"
+          },
+          "work_format": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "office",
+                "hybrid",
+                "remote"
+              ]
+            },
+            "type": "array",
+            "title": "Work Format",
+            "default": []
+          },
+          "contact_method": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Contact Method",
+            "description": "Как связаться с работодателем"
+          }
+        },
+        "type": "object",
+        "required": [
+          "salary_from",
+          "salary_to",
+          "candidate_id",
+          "title",
+          "description",
+          "contact_method"
+        ],
+        "title": "InvitationIn"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "MessageOut": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "MessageOut"
+      },
+      "NeedIn": {
+        "properties": {
+          "salary_from": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary From",
+            "description": "Нижняя граница, ₽/мес"
+          },
+          "salary_to": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary To",
+            "description": "Верхняя граница, ₽/мес"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 8000,
+            "title": "Description",
+            "default": ""
+          },
+          "team_about": {
+            "type": "string",
+            "maxLength": 4000,
+            "title": "Team About",
+            "default": ""
+          },
+          "specialization": {
+            "type": "string",
+            "enum": [
+              "backend",
+              "frontend",
+              "data",
+              "devops",
+              "qa"
+            ],
+            "title": "Specialization"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "intern",
+              "junior",
+              "middle",
+              "senior"
+            ],
+            "title": "Grade"
+          },
+          "stack_must": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stack Must",
+            "default": []
+          },
+          "stack_nice": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stack Nice",
+            "default": []
+          },
+          "work_format": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "office",
+                "hybrid",
+                "remote"
+              ]
+            },
+            "type": "array",
+            "title": "Work Format",
+            "default": []
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "City",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "salary_from",
+          "salary_to",
+          "title",
+          "specialization",
+          "grade"
+        ],
+        "title": "NeedIn"
+      },
+      "ParseIn": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 20000,
+            "minLength": 10,
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ParseIn"
+      },
+      "PrivacyIn": {
+        "properties": {
+          "show_name": {
+            "type": "boolean",
+            "title": "Show Name",
+            "default": false
+          },
+          "show_salary": {
+            "type": "boolean",
+            "title": "Show Salary",
+            "default": true
+          },
+          "show_fsp": {
+            "type": "boolean",
+            "title": "Show Fsp",
+            "default": true
+          },
+          "show_tasks": {
+            "type": "boolean",
+            "title": "Show Tasks",
+            "default": true
+          },
+          "hidden_companies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hidden Companies",
+            "description": "Названия компаний, от которых скрыт профиль"
+          },
+          "job_status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "open",
+              "closed"
+            ],
+            "title": "Job Status",
+            "default": "active"
+          },
+          "consent_publish": {
+            "type": "boolean",
+            "title": "Consent Publish",
+            "description": "Согласие на публикацию профиля работодателям"
+          }
+        },
+        "type": "object",
+        "required": [
+          "consent_publish"
+        ],
+        "title": "PrivacyIn"
+      },
+      "ProfileIn": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Full Name",
+            "default": ""
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 50,
+            "title": "Phone",
+            "default": ""
+          },
+          "telegram": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Telegram",
+            "default": ""
+          },
+          "contact_email": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Contact Email",
+            "default": ""
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "City",
+            "default": ""
+          },
+          "relocation": {
+            "type": "boolean",
+            "title": "Relocation",
+            "default": false
+          },
+          "about": {
+            "type": "string",
+            "maxLength": 4000,
+            "title": "About",
+            "default": ""
+          },
+          "experience_years": {
+            "type": "number",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Experience Years",
+            "default": 0
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Roles",
+            "default": []
+          },
+          "soft_skills": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Soft Skills",
+            "default": []
+          },
+          "resume_source": {
+            "type": "string",
+            "enum": [
+              "form",
+              "pdf"
+            ],
+            "title": "Resume Source",
+            "default": "form"
+          }
+        },
+        "type": "object",
+        "title": "ProfileIn"
+      },
+      "RateIn": {
+        "properties": {
+          "score": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "title": "RateIn"
+      },
+      "RegisterIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "employer"
+            ],
+            "title": "Role"
+          },
+          "consent_pd": {
+            "type": "boolean",
+            "title": "Consent Pd",
+            "description": "Согласие на обработку персональных данных (152-ФЗ)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "role",
+          "consent_pd"
+        ],
+        "title": "RegisterIn"
+      },
+      "RegisterOut": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "dev_verify_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dev Verify Link",
+            "description": "Только в демо-режиме: ссылка из письма"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "RegisterOut"
+      },
+      "RubricPoint": {
+        "properties": {
+          "point": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Point"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Keywords"
+          }
+        },
+        "type": "object",
+        "required": [
+          "point",
+          "keywords"
+        ],
+        "title": "RubricPoint"
+      },
+      "SubmitIn": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "maxLength": 8000,
+            "minLength": 1,
+            "title": "Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "title": "SubmitIn"
+      },
+      "SurveyIn": {
+        "properties": {
+          "industries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industries",
+            "description": "Интересные отрасли"
+          },
+          "specialization": {
+            "type": "string",
+            "enum": [
+              "backend",
+              "frontend",
+              "data",
+              "devops",
+              "qa"
+            ],
+            "title": "Specialization"
+          },
+          "stack": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Stack",
+            "description": "Навыки из справочника выбранной специализации"
+          },
+          "experience_years": {
+            "type": "number",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Experience Years"
+          },
+          "work_format": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "office",
+                "hybrid",
+                "remote"
+              ]
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Work Format"
+          },
+          "salary_expect_min": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary Expect Min"
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "City",
+            "default": ""
+          },
+          "relocation": {
+            "type": "boolean",
+            "title": "Relocation",
+            "default": false
+          },
+          "declared_grade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "intern",
+                  "junior",
+                  "middle",
+                  "senior"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Declared Grade"
+          }
+        },
+        "type": "object",
+        "required": [
+          "specialization",
+          "stack",
+          "experience_years",
+          "work_format",
+          "salary_expect_min"
+        ],
+        "title": "SurveyIn"
+      },
+      "TaskIn": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 8000,
+            "minLength": 10,
+            "title": "Body"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "solve",
+              "approach"
+            ],
+            "title": "Kind",
+            "default": "approach"
+          },
+          "specialization": {
+            "type": "string",
+            "enum": [
+              "backend",
+              "frontend",
+              "data",
+              "devops",
+              "qa"
+            ],
+            "title": "Specialization"
+          },
+          "grades": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "intern",
+                "junior",
+                "middle",
+                "senior"
+              ]
+            },
+            "type": "array",
+            "title": "Grades",
+            "default": []
+          },
+          "rubric": {
+            "items": {
+              "$ref": "#/components/schemas/RubricPoint"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Rubric"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "body",
+          "specialization",
+          "rubric"
+        ],
+        "title": "TaskIn"
+      },
+      "TestStartIn": {
+        "properties": {
+          "declared_grade": {
+            "type": "string",
+            "enum": [
+              "intern",
+              "junior",
+              "middle",
+              "senior"
+            ],
+            "title": "Declared Grade"
+          }
+        },
+        "type": "object",
+        "required": [
+          "declared_grade"
+        ],
+        "title": "TestStartIn"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "TokenOut"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "role"
+        ],
+        "title": "UserOut"
+      },
+      "VacancyIn": {
+        "properties": {
+          "salary_from": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary From",
+            "description": "Нижняя граница, ₽/мес"
+          },
+          "salary_to": {
+            "type": "integer",
+            "maximum": 10000000.0,
+            "minimum": 1000.0,
+            "title": "Salary To",
+            "description": "Верхняя граница, ₽/мес"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 8000,
+            "title": "Description",
+            "default": ""
+          },
+          "specialization": {
+            "type": "string",
+            "enum": [
+              "backend",
+              "frontend",
+              "data",
+              "devops",
+              "qa"
+            ],
+            "title": "Specialization"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "intern",
+              "junior",
+              "middle",
+              "senior"
+            ],
+            "title": "Grade"
+          },
+          "stack": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stack",
+            "default": []
+          },
+          "work_format": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "office",
+                "hybrid",
+                "remote"
+              ]
+            },
+            "type": "array",
+            "title": "Work Format",
+            "default": []
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "City",
+            "default": ""
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "closed"
+            ],
+            "title": "Status",
+            "default": "published"
+          }
+        },
+        "type": "object",
+        "required": [
+          "salary_from",
+          "salary_to",
+          "title",
+          "specialization",
+          "grade"
+        ],
+        "title": "VacancyIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WebhookIn": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Url",
+            "description": "URL приёмника в ATS; пустая строка — отключить",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "WebhookIn"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

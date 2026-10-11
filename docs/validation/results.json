@@ -1,0 +1,200 @@
+{
+  "A1_accuracy": {
+    "n": 1500,
+    "ours_cat": {
+      "exact": 0.768,
+      "within_1": 0.999,
+      "overrated": 0.106
+    },
+    "fixed_test_irt": {
+      "exact": 0.752,
+      "within_1": 0.999,
+      "overrated": 0.119
+    },
+    "fixed_test_percent": {
+      "exact": 0.442,
+      "within_1": 0.96,
+      "overrated": 0.043
+    },
+    "self_declared": {
+      "exact": 0.535,
+      "within_1": 0.987,
+      "overrated": 0.343
+    },
+    "confusion_ours": {
+      "none": {
+        "none": 47,
+        "intern": 12,
+        "junior": 0,
+        "middle": 0,
+        "senior": 0
+      },
+      "intern": {
+        "none": 28,
+        "intern": 182,
+        "junior": 56,
+        "middle": 0,
+        "senior": 0
+      },
+      "junior": {
+        "none": 0,
+        "intern": 54,
+        "junior": 465,
+        "middle": 53,
+        "senior": 0
+      },
+      "middle": {
+        "none": 0,
+        "intern": 0,
+        "junior": 83,
+        "middle": 339,
+        "senior": 38
+      },
+      "senior": {
+        "none": 0,
+        "intern": 0,
+        "junior": 1,
+        "middle": 23,
+        "senior": 119
+      }
+    }
+  },
+  "A2_consistency": {
+    "ours_grade_agreement": 0.683,
+    "ours_kappa": 0.56,
+    "fixed_grade_agreement": 0.66,
+    "fixed_kappa": 0.533,
+    "ours_theta_retest_corr": 0.826
+  },
+  "A3_discrimination": {
+    "theta_corr_ours": 0.903,
+    "theta_rmse_ours": 0.455,
+    "theta_corr_fixed": 0.904,
+    "theta_rmse_fixed": 0.446,
+    "mean_items_ours": 18.18,
+    "items_fixed": 18,
+    "mean_se_ours": 0.431,
+    "templates_evaluated": 106,
+    "median_point_biserial": 0.418,
+    "share_rpb_ge_0_2": 1.0,
+    "median_rpb_by_pool": {
+      "backend": 0.423,
+      "core": 0.376,
+      "data": 0.415,
+      "devops": 0.427,
+      "frontend": 0.444,
+      "qa": 0.431
+    },
+    "strong_vs_weak_quartile_theta_gap": 2.396
+  },
+  "A4_leak_resistance": {
+    "fixed": {
+      "leak_coverage_of_served_items": 1.0,
+      "cheaters_confirmed_middle": 1.0,
+      "mean_theta_inflation": 3.235
+    },
+    "static_pool": {
+      "leak_coverage_of_served_items": 1.0,
+      "cheaters_confirmed_middle": 1.0,
+      "mean_theta_inflation": 3.299
+    },
+    "parametric": {
+      "leak_coverage_of_served_items": 0.0,
+      "cheaters_confirmed_middle": 0.048,
+      "mean_theta_inflation": -0.109
+    },
+    "no_leak_reference": {
+      "cheaters_confirmed_middle": 0.077
+    }
+  },
+  "A5_leak_detector": {
+    "leaked_templates": 4,
+    "detected": 4,
+    "exposures_after_leak_until_flag": {
+      "backend.async_gather_time": 93,
+      "backend.py_exceptions": 292,
+      "backend.retry_idempotency": 131,
+      "core.git_commands": 69
+    },
+    "false_positives_with_leak": 1,
+    "false_positives_control_no_leak": 1,
+    "control_false_positive_ids": [
+      "backend.redis_types"
+    ],
+    "pool_size": 35
+  },
+  "A6_calibration": {
+    "people": 3000,
+    "answers_per_person": 20,
+    "templates": 35,
+    "corr_a": 0.85,
+    "rmse_a": 0.081,
+    "corr_b": 0.998,
+    "rmse_b": 0.071,
+    "seconds": 1.3
+  },
+  "B_matching": {
+    "candidates": 500,
+    "needs": 40,
+    "seeds": [
+      5,
+      6,
+      7
+    ],
+    "dev_seed": 105,
+    "systems": {
+      "baseline_keywords": {
+        "p_at_10": 0.756,
+        "p_strict_at_10": 0.276,
+        "ndcg_at_10": 0.59,
+        "mrr": 0.595,
+        "wrong_category_in_top10": 0.097,
+        "range": {
+          "ndcg_at_10": [
+            0.562,
+            0.631
+          ],
+          "p_at_10": [
+            0.72,
+            0.79
+          ]
+        }
+      },
+      "ours": {
+        "p_at_10": 0.919,
+        "p_strict_at_10": 0.349,
+        "ndcg_at_10": 0.737,
+        "mrr": 0.674,
+        "wrong_category_in_top10": 0.0,
+        "range": {
+          "ndcg_at_10": [
+            0.72,
+            0.756
+          ],
+          "p_at_10": [
+            0.903,
+            0.927
+          ]
+        }
+      },
+      "ours_declared_skills_only": {
+        "p_at_10": 0.914,
+        "p_strict_at_10": 0.342,
+        "ndcg_at_10": 0.731,
+        "mrr": 0.684,
+        "wrong_category_in_top10": 0.0,
+        "range": {
+          "ndcg_at_10": [
+            0.713,
+            0.751
+          ],
+          "p_at_10": [
+            0.9,
+            0.923
+          ]
+        }
+      }
+    },
+    "category_accuracy_in_db": 0.589
+  }
+}

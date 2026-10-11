@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 262" width="760" height="262" font-family="Manrope, 'Segoe UI', Arial, sans-serif" role="img" aria-label="При утечке ответов наш банк пропускает 5% списывающих, единый тест — 100%">
+<rect width="760" height="262" fill="#ffffff"/>
+<text x="20" y="32" font-size="17" font-weight="700" fill="#1d1428">При утечке ответов наш банк пропускает 5% списывающих, единый тест — 100%</text>
+<text x="20" y="54" font-size="12.5" fill="#6b5c7b">Доля junior, «подтвердивших» middle по слитым ответам 300 предыдущих кандидатов</text>
+<line x1="300.0" y1="76" x2="300.0" y2="222" stroke="#ece6f3"/>
+<text x="300.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">0%</text>
+<line x1="395.0" y1="76" x2="395.0" y2="222" stroke="#ece6f3"/>
+<text x="395.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">25%</text>
+<line x1="490.0" y1="76" x2="490.0" y2="222" stroke="#ece6f3"/>
+<text x="490.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">50%</text>
+<line x1="585.0" y1="76" x2="585.0" y2="222" stroke="#ece6f3"/>
+<text x="585.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">75%</text>
+<line x1="680.0" y1="76" x2="680.0" y2="222" stroke="#ece6f3"/>
+<text x="680.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">100%</text>
+<text x="288" y="101.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Единый тест</text>
+<rect x="300" y="84" width="380.0" height="26" rx="4" fill="#cfc6db"/>
+<text x="688.0" y="101.5" font-size="13" font-weight="500" fill="#1d1428">100%</text>
+<text x="288" y="145.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Банк без параметризации</text>
+<rect x="300" y="128" width="380.0" height="26" rx="4" fill="#cfc6db"/>
+<text x="688.0" y="145.5" font-size="13" font-weight="500" fill="#1d1428">100%</text>
+<text x="288" y="189.5" font-size="13" font-weight="700" fill="#1d1428" text-anchor="end">Параметрические шаблоны + CAT</text>
+<rect x="300" y="172" width="18.2" height="26" rx="4" fill="#5b1a8c"/>
+<text x="337.3" y="189.5" font-size="13" font-weight="700" fill="#5b1a8c">5%</text>
+<line x1="329.3" y1="70" x2="329.3" y2="222" stroke="#b3261e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="334.3" y="68" font-size="11.5" fill="#b3261e">без утечки: 8%</text>
+<text x="740" y="256" font-size="10.5" fill="#6b5c7b" text-anchor="end">validation/run_validation.py · A4</text>
+</svg>
