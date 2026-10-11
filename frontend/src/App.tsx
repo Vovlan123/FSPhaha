@@ -50,6 +50,13 @@ function Home() {
 export default function App() {
   return (
     <AuthProvider>
+      <div className="atmosphere" aria-hidden="true">
+        <span className="orb orb-1" />
+        <span className="orb orb-2" />
+        <span className="orb orb-3" />
+        <span className="orb orb-4" />
+        <span className="grain" />
+      </div>
       <DictProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>

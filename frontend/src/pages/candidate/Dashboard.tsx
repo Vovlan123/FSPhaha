@@ -26,7 +26,7 @@ export default function CandidateDashboard() {
           </div>
           <div className="stack-sm" style={{ alignItems: "flex-end" }}>
             <span className="small muted">Сила профиля</span>
-            <span style={{ fontSize: 40, fontWeight: 800, lineHeight: 1 }}>{Math.round(s.strength.P * 100)}</span>
+            <span className="hero-strength">{Math.round(s.strength.P * 100)}</span>
             <span className="tiny muted">из 100 — по ней вы ранжируетесь в категории</span>
           </div>
         </div>

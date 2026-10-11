@@ -7,13 +7,35 @@ import type { Role, User } from "../types";
 
 function AuthCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div style={{ maxWidth: 460, margin: "24px auto" }} className="card stack">
+    <div className="card stack auth-card">
       <div>
         <h2>{title}</h2>
         {subtitle && <p className="muted small" style={{ marginTop: 6 }}>{subtitle}</p>}
       </div>
       {children}
     </div>
+  );
+}
+
+function PasswordField({ value, onChange, autoComplete, hint }: { value: string; onChange: (v: string) => void; autoComplete: string; hint?: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <Field label="Пароль" hint={hint}>
+      <div className="input-wrap">
+        <input
+          className="input"
+          type={show ? "text" : "password"}
+          autoComplete={autoComplete}
+          required
+          minLength={autoComplete === "new-password" ? 8 : undefined}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <button type="button" className="input-action" onClick={() => setShow((s) => !s)} aria-pressed={show}>
+          {show ? "Скрыть" : "Показать"}
+        </button>
+      </div>
+    </Field>
   );
 }
 
@@ -68,14 +90,17 @@ export function Login() {
   }
 
   return (
-    <AuthCard title="Вход" subtitle="Демо: candidate@demo.ru или employer@demo.ru, пароль demo12345">
+    <AuthCard title="Вход" subtitle="Демо-аккаунты можно подставить одним нажатием — пароль demo12345">
+      <div className="demo-accounts">
+        <span className="tiny muted">Быстрый вход:</span>
+        <button type="button" className="chip" onClick={() => { setEmail("candidate@demo.ru"); setPassword("demo12345"); }}>Кандидат</button>
+        <button type="button" className="chip" onClick={() => { setEmail("employer@demo.ru"); setPassword("demo12345"); }}>Работодатель</button>
+      </div>
       <form className="stack" onSubmit={submit}>
         <Field label="Email">
           <input className="input" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
-        <Field label="Пароль">
-          <input className="input" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
+        <PasswordField value={password} onChange={setPassword} autoComplete="current-password" />
         {error && <div className={`alert ${needVerify ? "alert-warn" : "alert-error"}`} role="alert">{error}</div>}
         {needVerify && !devLink && <button type="button" className="btn btn-secondary" onClick={resend}>Отправить письмо ещё раз</button>}
         {devLink && <DevLink link={devLink} />}
@@ -142,9 +167,7 @@ export function Register() {
         <Field label="Email">
           <input className="input" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
-        <Field label="Пароль" hint="Не короче 8 символов">
-          <input className="input" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
+        <PasswordField value={password} onChange={setPassword} autoComplete="new-password" hint="Не короче 8 символов" />
         <label className="check">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
           <span className="small">
