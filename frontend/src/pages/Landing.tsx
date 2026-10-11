@@ -69,7 +69,7 @@ export default function Landing() {
             </div>
           ))}
         </div>
-        <div className="card card-accent">
+            <div className="card card-accent">
           <div className="row-between">
             <div>
               <h3>Демо-доступ для проверки</h3>
@@ -82,6 +82,10 @@ export default function Landing() {
           </div>
         </div>
       </div>
+      <footer className="site-footer">
+        <span>ФСП Талант · подбор с подтверждённым профилем</span>
+        <Link to="/how-it-works">Как это работает</Link>
+      </footer>
     </>
   );
 }

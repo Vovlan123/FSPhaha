@@ -33,6 +33,13 @@ export function Logo() {
   );
 }
 
+function initials(email: string) {
+  const name = email.split("@")[0] || "?";
+  const parts = name.split(/[._-]+/).filter(Boolean);
+  const letters = (parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "");
+  return letters.toUpperCase() || "?";
+}
+
 export function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
@@ -47,8 +54,11 @@ export function Layout() {
   }, [user, loc.pathname]);
 
   const items = user?.role === "candidate" ? CANDIDATE_NAV : user?.role === "employer" ? EMPLOYER_NAV : [];
+  const onLogin = loc.pathname.startsWith("/login");
+  const onRegister = loc.pathname.startsWith("/register");
   return (
     <>
+      <a href="#content" className="skip-link">К содержанию</a>
       <header className="app-header">
         <div className="app-header-inner">
           <Logo />
@@ -62,6 +72,7 @@ export function Layout() {
           </nav>
           {user ? (
             <div className="user-box">
+              <span className="avatar" aria-hidden>{initials(user.email)}</span>
               <span>
                 <span className="email">{user.email}</span>
                 <br />
@@ -79,12 +90,14 @@ export function Layout() {
             </div>
           ) : (
             <div className="row">
-              <Link to="/login" className="btn btn-light btn-sm">Войти</Link>
+              <Link to="/how-it-works" className="btn btn-light btn-sm">Как это работает</Link>
+              {!onLogin && <Link to="/login" className="btn btn-light btn-sm">Войти</Link>}
+              {!onRegister && <Link to="/register" className="btn btn-white btn-sm">Регистрация</Link>}
             </div>
           )}
         </div>
       </header>
-      <main className="main">
+      <main className="main" id="content">
         <Outlet />
       </main>
     </>
