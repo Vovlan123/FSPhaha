@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 262" width="760" height="262" font-family="Manrope, 'Segoe UI', Arial, sans-serif" role="img" aria-label="Подбор: nDCG@10 0,74 против 0,59 у поиска по резюме">
+<rect width="760" height="262" fill="#ffffff"/>
+<text x="20" y="32" font-size="17" font-weight="700" fill="#1d1428">Подбор: nDCG@10 0,74 против 0,59 у поиска по резюме</text>
+<text x="20" y="54" font-size="12.5" fill="#6b5c7b">Качество топ-10 выдачи по 40 потребностям, среднее по 3 мирам, усы — разброс между мирами</text>
+<line x1="300.0" y1="76" x2="300.0" y2="222" stroke="#ece6f3"/>
+<text x="300.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">0,00</text>
+<line x1="395.0" y1="76" x2="395.0" y2="222" stroke="#ece6f3"/>
+<text x="395.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">0,25</text>
+<line x1="490.0" y1="76" x2="490.0" y2="222" stroke="#ece6f3"/>
+<text x="490.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">0,50</text>
+<line x1="585.0" y1="76" x2="585.0" y2="222" stroke="#ece6f3"/>
+<text x="585.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">0,75</text>
+<line x1="680.0" y1="76" x2="680.0" y2="222" stroke="#ece6f3"/>
+<text x="680.0" y="238" font-size="11" fill="#6b5c7b" text-anchor="middle">1,00</text>
+<text x="288" y="101.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Ключевые слова резюме</text>
+<rect x="300" y="84" width="224.2" height="26" rx="4" fill="#cfc6db"/>
+<line x1="513.6" y1="97.0" x2="539.8" y2="97.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="513.6" y1="91.0" x2="513.6" y2="103.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="539.8" y1="91.0" x2="539.8" y2="103.0" stroke="#1d1428" stroke-width="1.4"/>
+<text x="547.8" y="101.5" font-size="13" font-weight="500" fill="#1d1428">0,59</text>
+<text x="288" y="145.5" font-size="13" font-weight="700" fill="#1d1428" text-anchor="end">Подбор ФСП Талант</text>
+<rect x="300" y="128" width="280.1" height="26" rx="4" fill="#5b1a8c"/>
+<line x1="573.6" y1="141.0" x2="587.3" y2="141.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="573.6" y1="135.0" x2="573.6" y2="147.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="587.3" y1="135.0" x2="587.3" y2="147.0" stroke="#1d1428" stroke-width="1.4"/>
+<text x="595.3" y="145.5" font-size="13" font-weight="700" fill="#5b1a8c">0,74</text>
+<text x="288" y="189.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Абляция: навыки только из резюме</text>
+<rect x="300" y="172" width="277.8" height="26" rx="4" fill="#cfc6db"/>
+<line x1="570.9" y1="185.0" x2="585.4" y2="185.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="570.9" y1="179.0" x2="570.9" y2="191.0" stroke="#1d1428" stroke-width="1.4"/>
+<line x1="585.4" y1="179.0" x2="585.4" y2="191.0" stroke="#1d1428" stroke-width="1.4"/>
+<text x="593.4" y="189.5" font-size="13" font-weight="500" fill="#1d1428">0,73</text>
+<text x="740" y="256" font-size="10.5" fill="#6b5c7b" text-anchor="end">validation/run_validation.py · B</text>
+</svg>

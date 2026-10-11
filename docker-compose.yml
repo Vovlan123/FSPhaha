@@ -1,0 +1,60 @@
+# Запуск: docker compose up --build  →  http://localhost:8080
+# Демо-данные создаются при первом старте (SEED_ON_START=1). Письма — в Mailpit: http://localhost:8025
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fsp_talent
+      POSTGRES_USER: fsp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fsp_dev_password}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fsp -d fsp_talent"]
+      interval: 3s
+      retries: 20
+    mem_limit: 256m
+
+  fsp-mock:
+    build: ./backend
+    command: uvicorn fsp_mock.main:app --host 0.0.0.0 --port 8001 --root-path /fsp
+    environment:
+      FSP_CLIENT_ID: fsp-talent
+      FSP_CLIENT_SECRET: ${FSP_CLIENT_SECRET:-fsp-talent-secret}
+    mem_limit: 192m
+
+  backend:
+    build: ./backend
+    depends_on:
+      db: { condition: service_healthy }
+      fsp-mock: { condition: service_started }
+    environment:
+      DATABASE_URL: postgresql+psycopg://fsp:${POSTGRES_PASSWORD:-fsp_dev_password}@db:5432/fsp_talent
+      SECRET_KEY: ${SECRET_KEY:-change-me-please-very-long-random-string}
+      FRONTEND_URL: ${PUBLIC_URL:-http://localhost:8080}
+      BACKEND_PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${PUBLIC_URL:-http://localhost:8080}
+      FSP_MOCK_EMBEDDED: "false"
+      FSP_BASE_URL: ${PUBLIC_URL:-http://localhost:8080}/fsp   # адрес страницы входа ФСП ID для браузера
+      FSP_INTERNAL_URL: http://fsp-mock:8001                     # адрес для запросов сервер→сервер
+      FSP_CLIENT_ID: fsp-talent
+      FSP_CLIENT_SECRET: ${FSP_CLIENT_SECRET:-fsp-talent-secret}
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      DEMO_EXPOSE_LINKS: ${DEMO_EXPOSE_LINKS:-true}
+      SEED_ON_START: ${SEED_ON_START:-1}
+      DEMO_WEBHOOK_URL: http://backend:8000/api/system/webhook-echo
+    mem_limit: 512m
+
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    ports: ["8080:80"]
+    mem_limit: 64m
+
+  mailpit:
+    image: axllent/mailpit:v1.20
+    ports: ["8025:8025"]
+    mem_limit: 64m
+
+volumes:
+  pgdata:

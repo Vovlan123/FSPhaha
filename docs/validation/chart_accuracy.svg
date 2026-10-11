@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 306" width="760" height="306" font-family="Manrope, 'Segoe UI', Arial, sans-serif" role="img" aria-label="Тест присваивает истинный грейд в 77% случаев">
+<rect width="760" height="306" fill="#ffffff"/>
+<text x="20" y="32" font-size="17" font-weight="700" fill="#1d1428">Тест присваивает истинный грейд в 77% случаев</text>
+<text x="20" y="54" font-size="12.5" fill="#6b5c7b">Доля кандидатов с точно определённым грейдом, 1500 синтетических кандидатов с известным уровнем</text>
+<line x1="300.0" y1="76" x2="300.0" y2="266" stroke="#ece6f3"/>
+<text x="300.0" y="282" font-size="11" fill="#6b5c7b" text-anchor="middle">0%</text>
+<line x1="395.0" y1="76" x2="395.0" y2="266" stroke="#ece6f3"/>
+<text x="395.0" y="282" font-size="11" fill="#6b5c7b" text-anchor="middle">25%</text>
+<line x1="490.0" y1="76" x2="490.0" y2="266" stroke="#ece6f3"/>
+<text x="490.0" y="282" font-size="11" fill="#6b5c7b" text-anchor="middle">50%</text>
+<line x1="585.0" y1="76" x2="585.0" y2="266" stroke="#ece6f3"/>
+<text x="585.0" y="282" font-size="11" fill="#6b5c7b" text-anchor="middle">75%</text>
+<line x1="680.0" y1="76" x2="680.0" y2="266" stroke="#ece6f3"/>
+<text x="680.0" y="282" font-size="11" fill="#6b5c7b" text-anchor="middle">100%</text>
+<text x="288" y="101.5" font-size="13" font-weight="700" fill="#1d1428" text-anchor="end">Адаптивный тест (CAT + IRT)</text>
+<rect x="300" y="84" width="291.8" height="26" rx="4" fill="#5b1a8c"/>
+<text x="599.8" y="101.5" font-size="13" font-weight="700" fill="#5b1a8c">77%</text>
+<text x="288" y="145.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Единый тест той же длины</text>
+<rect x="300" y="128" width="285.8" height="26" rx="4" fill="#cfc6db"/>
+<text x="593.8" y="145.5" font-size="13" font-weight="500" fill="#1d1428">75%</text>
+<text x="288" y="189.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Единый тест, грейд по доле верных</text>
+<rect x="300" y="172" width="168.0" height="26" rx="4" fill="#cfc6db"/>
+<text x="476.0" y="189.5" font-size="13" font-weight="500" fill="#1d1428">44%</text>
+<text x="288" y="233.5" font-size="13" font-weight="500" fill="#1d1428" text-anchor="end">Самооценка в резюме</text>
+<rect x="300" y="216" width="203.3" height="26" rx="4" fill="#cfc6db"/>
+<text x="511.3" y="233.5" font-size="13" font-weight="500" fill="#1d1428">54%</text>
+<text x="740" y="300" font-size="10.5" fill="#6b5c7b" text-anchor="end">validation/run_validation.py · A1</text>
+</svg>

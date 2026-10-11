@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 530" width="760" height="530" font-family="Manrope, 'Segoe UI', Arial, sans-serif" role="img" aria-label="Привязка ФСП ID: OAuth 2.0 authorization code">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4b0f73"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a7a9b"/></marker>
+  </defs>
+  <rect width="760" height="530" fill="#ffffff"/>
+  <text x="20" y="30" font-size="17" font-weight="700" fill="#1d1428">Привязка ФСП ID: OAuth 2.0 authorization code, пути Keycloak</text>
+  <text x="20" y="50" font-size="12" fill="#6b5c7b">Платформа не видит пароль ФСП; state связывает возврат с пользователем и живёт 10 минут</text>
+  <!-- участники -->
+  <g font-size="13" font-weight="700" text-anchor="middle">
+    <rect x="40" y="70" width="150" height="36" rx="8" fill="#efe6f8" stroke="#7a35b0"/><text x="115" y="93" fill="#3d0c63">Кандидат (браузер)</text>
+    <rect x="300" y="70" width="160" height="36" rx="8" fill="#5b1a8c"/><text x="380" y="93" fill="#ffffff">Платформа (backend)</text>
+    <rect x="570" y="70" width="160" height="36" rx="8" fill="#efe6f8" stroke="#7a35b0"/><text x="650" y="93" fill="#3d0c63">ФСП ID / реестр</text>
+  </g>
+  <g stroke="#cdbde0" stroke-dasharray="4 4"><line x1="115" y1="106" x2="115" y2="485"/><line x1="380" y1="106" x2="380" y2="485"/><line x1="650" y1="106" x2="650" y2="485"/></g>
+  <g font-size="11.5" fill="#1d1428">
+    <!-- 1 -->
+    <line x1="115" y1="138" x2="374" y2="138" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="124" y="131">1. «Связать» → POST /api/fsp/link/start</text>
+    <!-- 2 -->
+    <line x1="380" y1="174" x2="121" y2="174" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="134" y="167">2. authorize_url + state (сохранён в БД, 10 мин)</text>
+    <!-- 3 -->
+    <line x1="115" y1="212" x2="644" y2="212" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="124" y="205">3. /realms/fsp/protocol/openid-connect/auth?client_id&amp;redirect_uri&amp;state&amp;scope</text>
+    <!-- 4 -->
+    <rect x="560" y="226" width="180" height="34" rx="6" fill="#f7f2fc" stroke="#d9c4ef"/>
+    <text x="650" y="247" text-anchor="middle">4. вход и согласие в ФСП ID</text>
+    <!-- 5 -->
+    <line x1="650" y1="284" x2="386" y2="284" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="400" y="277">5. 302 → /api/fsp/callback?code&amp;state</text>
+    <!-- 6 -->
+    <line x1="380" y1="320" x2="644" y2="320" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="392" y="313">6. POST /token (code) → access_token</text>
+    <line x1="380" y1="356" x2="644" y2="356" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="392" y="349">7. GET /userinfo → { sub, fsp_id, name }</text>
+    <line x1="380" y1="392" x2="644" y2="392" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="392" y="385">8. GET /api/v1/participants/{fsp_id}/achievements</text>
+    <!-- 9 -->
+    <rect x="290" y="404" width="180" height="40" rx="6" fill="#f7f2fc" stroke="#d9c4ef"/>
+    <text x="380" y="421" text-anchor="middle">9. снимок достижений + дата,</text>
+    <text x="380" y="436" text-anchor="middle">балл ФСП → профиль</text>
+    <!-- 10 -->
+    <line x1="380" y1="470" x2="121" y2="470" stroke="#4b0f73" stroke-width="1.6" marker-end="url(#a)"/>
+    <text x="134" y="463">10. 302 → /candidate/settings?fsp=linked</text>
+    <text x="20" y="515" fill="#6b5c7b">Обновление достижений — client credentials (сервисный аккаунт) → GET achievements. Отвязка удаляет снимок.</text>
+  </g>
+</svg>
